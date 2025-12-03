@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Link Redirect</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, #f4f8ff, #f0f1ff 40%, #ffffff 75%);
+      color: #1f2937;
+    }
+    .container {
+      text-align: center;
+      max-width: 520px;
+      padding: 24px 20px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 1.6rem;
+    }
+    p {
+      margin: 0;
+      color: #4b5563;
+    }
+    .hint {
+      font-size: 0.95rem;
+      margin-top: 10px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Redirecting to your random track…</h1>
+    <p>Please hold on while we pick a link for you.</p>
+    <p class="hint">Tip: edit the <code>links</code> array in <code>index.html</code> to add Spotify, YouTube, or any other URLs.</p>
+  </div>
+  <script>
+    // === CONFIGURE YOUR LINKS HERE ===
+    // Add, remove, or reorder URLs in the array below. Mix any platforms you like (Spotify, YouTube, etc.).
+    // Examples:
+    // - Spotify track:  "https://open.spotify.com/track/12345"
+    // - Spotify episode: "https://open.spotify.com/episode/67890"
+    // - YouTube video:   "https://youtube.com/watch?v=ABCDEF"
+    // - Any URL:         "https://example.com/whatever"
+    const links = [
+      "https://open.spotify.com/episode/7gZIpuwToyoGQI3lS5Hc5O",
+      "https://open.spotify.com/track/3RkQ3UwOyPqpIiIvGVewuU",
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "https://music.youtube.com/watch?v=QaAPVdpVXKY",
+    ];
+
+    function redirectRandom() {
+      if (!Array.isArray(links) || links.length === 0) {
+        document.querySelector(".container h1").innerText = "No links configured yet";
+        document.querySelector(".container p").innerText = "Please add URLs to the links array in index.html.";
+        document.querySelector(".hint").innerText = "";
+        return;
+      }
+
+      const chosen = links[Math.floor(Math.random() * links.length)];
+
+      if (!chosen) {
+        document.querySelector(".container h1").innerText = "No link selected";
+        document.querySelector(".container p").innerText = "Check your links array for empty items.";
+        document.querySelector(".hint").innerText = "";
+        return;
+      }
+
+      window.location.replace(chosen);
+    }
+
+    window.onload = redirectRandom;
+  </script>
+</body>
+</html>
