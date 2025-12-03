@@ -1,85 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Random Link Redirect</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random Music / Podcast Redirect</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background: radial-gradient(circle at 20% 20%, #f4f8ff, #f0f1ff 40%, #ffffff 75%);
-      color: #1f2937;
-    }
-    .container {
-      text-align: center;
-      max-width: 520px;
-      padding: 24px 20px;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 14px;
-      box-shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
-    }
-    h1 {
-      margin: 0 0 12px;
-      font-size: 1.6rem;
-    }
-    p {
-      margin: 0;
-      color: #4b5563;
-    }
-    .hint {
-      font-size: 0.95rem;
-      margin-top: 10px;
-      color: #6b7280;
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7ff;color:#111827;padding:24px}
+    main{width:min(560px,100%);background:#fff;border-radius:16px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,.08);text-align:center}
+    h1{margin:0 0 8px;font-size:22px}
+    p{margin:0;color:#4b5563;line-height:1.5}
+    .box{margin-top:14px;text-align:left;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px;word-break:break-word}
+    .btn{display:inline-block;margin-top:12px;background:#2563eb;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Redirecting to your random track…</h1>
-    <p>Please hold on while we pick a link for you.</p>
-    <p class="hint">Tip: edit the <code>links</code> array in <code>index.html</code> to add Spotify, YouTube, or any other URLs.</p>
-  </div>
+  <main id="app" aria-live="polite">
+    <h1 id="title">Picking something…</h1>
+    <p id="msg">Redirecting you to a random link.</p>
+  </main>
+
   <script>
-    // === CONFIGURE YOUR LINKS HERE ===
-    // Add, remove, or reorder URLs in the array below. Mix any platforms you like (Spotify, YouTube, etc.).
-    // Examples:
-    // - Spotify track:  "https://open.spotify.com/track/12345"
-    // - Spotify episode: "https://open.spotify.com/episode/67890"
-    // - YouTube video:   "https://youtube.com/watch?v=ABCDEF"
-    // - Any URL:         "https://example.com/whatever"
-    const links = [
-      "https://open.spotify.com/episode/7gZIpuwToyoGQI3lS5Hc5O",
-      "https://open.spotify.com/track/3RkQ3UwOyPqpIiIvGVewuU",
-      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "https://music.youtube.com/watch?v=QaAPVdpVXKY",
+    // Add/remove links here. Each page load picks ONE at random and redirects.
+    // Debug mode: add ?debug=1 to your URL to preview instead of redirecting.
+    const LINKS = [
+      // Spotify tracks (canonical, no extra params)
+      "https://open.spotify.com/track/3Y7fpFZbHLpAvWJJYGehz0", // Follow the Sun — Xavier Rudd
+      "https://open.spotify.com/track/1bzymgL9lQBAYNhJIXlNNG", // Woodland — The Paper Kites
+      "https://open.spotify.com/track/5sIpifr43qTdWgphA9caLK", // Create in Me a Clean Heart — Keith Green
+      "https://open.spotify.com/track/0KkaDIqlaaymAdFZiwptnh", // I Love the Rain — Claudia Robin Gunn
+      "https://open.spotify.com/track/6ErL8Rpua0u3p71FrvyGjF", // Good Good Father
+      "https://open.spotify.com/track/13Nn3hJ8JZq6dWHk2v62ai", // O Come to the Altar
+      "https://open.spotify.com/track/7lE9AsH8YADFeykexnXK4u", // Jesus Strong and Kind
+      "https://open.spotify.com/track/5ZEekTUdIRdPf9V8QP2or5", // Psalm 91
+      "https://open.spotify.com/track/59tcQJiHwApzE4h6yVnL9i", // Ocean — John Butler
+      "https://open.spotify.com/track/0V3wPSX9ygBnCm8psDIegu", // Anti-Hero — Taylor Swift
+
+      // YouTube Music links (as provided; they’ll open YouTube Music)
+      "https://music.youtube.com/watch?v=3jMbSENuoTA", // Open the Eyes of My Heart
+      "https://music.youtube.com/watch?v=cu4f8zXC-yY", // Goodness of God
+      "https://music.youtube.com/watch?v=YdgoG8hTMUw", // Banana Pancakes
+      "https://music.youtube.com/watch?v=EWBGcNb9F5c", // Further Along
+      "https://music.youtube.com/watch?v=-XHXUqXV34w", // Who Am I
+      "https://music.youtube.com/watch?v=B8ks0CjeSc8", // It Is Well with My Soul
+
+      // Spotify podcast episodes (canonical)
+      "https://open.spotify.com/episode/6ku2bwRjJDt3xmo0Q04kkv", // Joe Rogan — Brett Weinstein
+      "https://open.spotify.com/episode/3bmClppHUtmdEljLa6P1YO", // Modern Wisdom — School of Life
+      "https://open.spotify.com/episode/0zrPQJBDLRQSCIa9NvJEXr", // Brené Brown
+      "https://open.spotify.com/episode/2LGv8RMDUztRYTC9chzB2N"  // Matthew McConaughey
     ];
 
-    function redirectRandom() {
-      if (!Array.isArray(links) || links.length === 0) {
-        document.querySelector(".container h1").innerText = "No links configured yet";
-        document.querySelector(".container p").innerText = "Please add URLs to the links array in index.html.";
-        document.querySelector(".hint").innerText = "";
-        return;
-      }
+    const params = new URLSearchParams(location.search);
+    const debug = params.get("debug") === "1";
 
-      const chosen = links[Math.floor(Math.random() * links.length)];
-
-      if (!chosen) {
-        document.querySelector(".container h1").innerText = "No link selected";
-        document.querySelector(".container p").innerText = "Check your links array for empty items.";
-        document.querySelector(".hint").innerText = "";
-        return;
-      }
-
-      window.location.replace(chosen);
+    function pickRandom(arr){
+      const clean = arr.filter(x => typeof x === "string" && x.trim().length);
+      if (!clean.length) return null;
+      return clean[Math.floor(Math.random() * clean.length)];
     }
 
-    window.onload = redirectRandom;
+    const chosen = pickRandom(LINKS);
+    const app = document.getElementById("app");
+    const title = document.getElementById("title");
+    const msg = document.getElementById("msg");
+
+    if (!chosen){
+      title.textContent = "No links configured";
+      msg.textContent = "Edit the LINKS array in index.html and add some URLs.";
+    } else if (debug){
+      title.textContent = "Debug mode (no auto redirect)";
+      msg.textContent = "Here’s the link that would have been chosen:";
+      const box = document.createElement("div");
+      box.className = "box";
+      box.innerHTML = `<a href="${chosen}" target="_blank" rel="noopener">${chosen}</a>`;
+      app.appendChild(box);
+
+      const a = document.createElement("a");
+      a.className = "btn";
+      a.href = chosen;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "Open it";
+      app.appendChild(a);
+    } else {
+      title.textContent = "Redirecting…";
+      msg.textContent = "Sending you to a random song/podcast now.";
+      location.replace(chosen);
+    }
   </script>
 </body>
 </html>
